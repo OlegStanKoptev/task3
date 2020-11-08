@@ -37,12 +37,18 @@ struct Triplet {
     bool bCoplanar;
 };
 
+/**
+ * Information for a thread
+ */
 typedef struct {
     long start_index;
     long end_index;
     vector<Triplet>* triplets;
 } pthrData;
 
+/**
+ * Function for a thread, that counts coplanar property for needed amount of triplets
+ */
 void* threadFunc(void* thread_data) {
     pthrData *data = (pthrData*) thread_data;
     auto start = next(data->triplets->begin(), data->start_index);
