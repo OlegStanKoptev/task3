@@ -28,6 +28,7 @@
 		DCC0C9A6255889FF00784F43 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DCC0C9A725588C3E00784F43 /* input */ = {isa = PBXFileReference; lastKnownFileType = folder; path = input; sourceTree = "<group>"; };
 		DCC0C9A825588C3E00784F43 /* output */ = {isa = PBXFileReference; lastKnownFileType = folder; path = output; sourceTree = "<group>"; };
+		DCC0C9A925588D2100784F43 /* app */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = app; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +45,7 @@
 		DCC0C98E255866EB00784F43 = {
 			isa = PBXGroup;
 			children = (
+				DCC0C9A925588D2100784F43 /* app */,
 				DCC0C9A725588C3E00784F43 /* input */,
 				DCC0C9A825588C3E00784F43 /* output */,
 				DCC0C9A6255889FF00784F43 /* README.md */,
