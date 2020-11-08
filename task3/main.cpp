@@ -38,15 +38,15 @@ struct Triplet {
 };
 
 typedef struct {
-    int start_index;
-    int end_index;
-    vector<Triplet> triplets;
+    long start_index;
+    long end_index;
+    vector<Triplet>* triplets;
 } pthrData;
 
 void* threadFunc(void* thread_data) {
     pthrData *data = (pthrData*) thread_data;
-    auto start = next(data->triplets.begin(), data->start_index);
-    auto end = next(data->triplets.begin(), data->end_index);
+    auto start = next(data->triplets->begin(), data->start_index);
+    auto end = next(data->triplets->begin(), data->end_index);
     
     for (auto i = start; i != end; ++i) {
         Triplet* triplet = &(*i);
@@ -112,21 +112,31 @@ int main(int argc, const char * argv[]) {
     }
     
 //  4. Calculate coplanar property for all triplets
-    for (auto i = triplets.begin(); i != triplets.end(); ++i) {
-        Triplet* triplet = &(*i);
-        float value =
-            triplet->triplet[0].x() *
-                (triplet->triplet[1].y() * triplet->triplet[2].z() -
-                 triplet->triplet[1].z() * triplet->triplet[2].y()) +
-            triplet->triplet[0].y() *
-                (triplet->triplet[1].z() * triplet->triplet[2].x() -
-                 triplet->triplet[1].x() * triplet->triplet[2].z()) +
-            triplet->triplet[0].z() *
-                (triplet->triplet[1].x() * triplet->triplet[2].y() -
-                 triplet->triplet[1].y() * triplet->triplet[2].x());
-        if (value == 0) {
-            triplet->bCoplanar = true;
+    if (amountOfTriplets < NUM_THREADS) {
+        pthread_t thread;
+        pthrData threadData;
+        threadData.triplets = &triplets;
+        threadData.start_index = 0;
+        threadData.end_index = amountOfTriplets;
+        pthread_create(&thread, NULL, threadFunc, &threadData);
+        pthread_join(thread, NULL);
+    } else {
+        pthread_t* threads = (pthread_t*) malloc(NUM_THREADS * sizeof(pthread_t));
+        pthrData* threadData = (pthrData*) malloc(NUM_THREADS * sizeof(pthrData));
+        long shift = ceil((float)amountOfTriplets / (float)NUM_THREADS);
+        for (int i = 0; i < NUM_THREADS; i++) {
+            threadData[i].triplets = &triplets;
+            threadData[i].start_index = i * shift;
+            if (i < NUM_THREADS - 1) {
+                threadData[i].end_index = (i + 1) * shift;
+            } else {
+                threadData[i].end_index = amountOfTriplets;
+            }
+            
+            pthread_create(&(threads[i]), NULL, threadFunc, &threadData[i]);
         }
+        for(int i = 0; i < NUM_THREADS; i++)
+            pthread_join(threads[i], NULL);
     }
     
 //  5. Write coplanar triplets
